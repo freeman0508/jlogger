@@ -1,5 +1,7 @@
 # jlogger
-    Jack's logger. I am a software engineer from China. You know so many Chinese company requir every employee get a English name. My English name is Jack a quite common name in English universe. So I named this little toy project jlogger. It's easy to know it's a logger library with c++. The first version contains features listed below:
+    Jack's logger. I am a software engineer from China. You know so many Chinese company requir every employee get a English name. My English name is Jack a quite common name in English universe. So I named this little toy project jlogger. It's easy to know it's a logger library with c++. 
+
+The version 1.0 contains features listed below:
     1. Support iostream syntax like: cout << "message ........" << endl; 
     2. Support singlton mode. You could use same logger instance in your one process.
     3. thread-safe
@@ -8,3 +10,10 @@
 The roadmap in the future:
     1. Support configuration file to set properties such as log file number, size benchmark, datetime format;
     2. Support multi logger id in one process. User could output log message to special log file;
+
+Version 1.1:
+    1. Support configure properties by a Configer class. This class just init in process, cannot read configuration file now.
+        1.1 can configure MaxLogFileSize, MaxLogFileCount, LogID and LogFilePath mapping
+    2. Support multi log files by log id. So far just support only one log id "ROOT". 
+        2.1 roll out log file by log id
+
