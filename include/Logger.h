@@ -46,7 +46,7 @@ Modify:
 
 class Logger{
 public:
-    //define logger level
+    //define Logger level
     enum LEVEL {information=0, warnning, error, critical, debug, nolevel};
     //single instance modle, static function to get ref of object 
     static Logger& Instance();
@@ -100,14 +100,14 @@ private:
 };
 //a global function to support LOGGER << pfunc << str2 << END_LOGGER. In these functions could do something before log message was writen into file
 //flag
-Logger& INFO(Logger& _logger);
-Logger& WARNNING(Logger& _logger);
-Logger& ERROR(Logger& _logger);
-Logger& CRITICAL(Logger& _logger);
-Logger& DEBUG(Logger& _logger);
-Logger& NOLEVEL(Logger& _logger);
+Logger& INFO(Logger& _Logger);
+Logger& WARNNING(Logger& _Logger);
+Logger& ERROR(Logger& _Logger);
+Logger& CRITICAL(Logger& _Logger);
+Logger& DEBUG(Logger& _Logger);
+Logger& NOLEVEL(Logger& _Logger);
 //end action
-Logger& END_LOGGER(Logger& _logger);
-Logger& SETID(Logger& _logger);
+Logger& END_LOGGER(Logger& _Logger);
+Logger& SETID(Logger& _Logger);
 
 #endif

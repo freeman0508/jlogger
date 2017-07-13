@@ -165,60 +165,60 @@ std::string Logger::getLevelMarker(LEVEL level)
 }
 
 //flags
-Logger& INFO(Logger& _logger)
+Logger& INFO(Logger& _Logger)
 {
-    _logger << _logger.getTime();
-    _logger << SEPARATOR;
-    _logger << _logger.getLevelMarker(Logger::information);
-    _logger << SEPARATOR;
-    return _logger;
+    _Logger << _Logger.getTime();
+    _Logger << SEPARATOR;
+    _Logger << _Logger.getLevelMarker(Logger::information);
+    _Logger << SEPARATOR;
+    return _Logger;
 }
-Logger& WARNNING(Logger& _logger)
+Logger& WARNNING(Logger& _Logger)
 {
-    _logger << _logger.getTime();
-    _logger << SEPARATOR;
-    _logger << _logger.getLevelMarker(Logger::warnning);
-    _logger << SEPARATOR;
-    return _logger;
+    _Logger << _Logger.getTime();
+    _Logger << SEPARATOR;
+    _Logger << _Logger.getLevelMarker(Logger::warnning);
+    _Logger << SEPARATOR;
+    return _Logger;
 }
-Logger& ERROR(Logger& _logger)
+Logger& ERROR(Logger& _Logger)
 {
-    _logger << _logger.getTime();
-    _logger << SEPARATOR;
-    _logger << _logger.getLevelMarker(Logger::error);
-    _logger << SEPARATOR;
-    return _logger;
+    _Logger << _Logger.getTime();
+    _Logger << SEPARATOR;
+    _Logger << _Logger.getLevelMarker(Logger::error);
+    _Logger << SEPARATOR;
+    return _Logger;
 }
-Logger& CRITICAL(Logger& _logger)
+Logger& CRITICAL(Logger& _Logger)
 {
-    _logger << _logger.getTime();
-    _logger << SEPARATOR;
-    _logger<< _logger.getLevelMarker(Logger::critical);
-    _logger << SEPARATOR;
-    return _logger;
+    _Logger << _Logger.getTime();
+    _Logger << SEPARATOR;
+    _Logger<< _Logger.getLevelMarker(Logger::critical);
+    _Logger << SEPARATOR;
+    return _Logger;
 }
-Logger& DEBUG(Logger& _logger)
+Logger& DEBUG(Logger& _Logger)
 {
-    _logger << _logger.getTime();
-    _logger << SEPARATOR;
-    _logger << _logger.getLevelMarker(Logger::debug);
-    _logger << SEPARATOR;
-    return _logger;
+    _Logger << _Logger.getTime();
+    _Logger << SEPARATOR;
+    _Logger << _Logger.getLevelMarker(Logger::debug);
+    _Logger << SEPARATOR;
+    return _Logger;
 }
-Logger& NOLEVEL(Logger& _logger)
+Logger& NOLEVEL(Logger& _Logger)
 {
-    _logger << _logger.getTime();
-    _logger << SEPARATOR;
-    _logger << _logger.getLevelMarker(Logger::nolevel);
-    _logger << SEPARATOR;
-    return _logger;
+    _Logger << _Logger.getTime();
+    _Logger << SEPARATOR;
+    _Logger << _Logger.getLevelMarker(Logger::nolevel);
+    _Logger << SEPARATOR;
+    return _Logger;
 }
-Logger& END_LOGGER(Logger& _logger)
+Logger& END_LOGGER(Logger& _Logger)
 {
-    _logger.writeLogToFile();
-    return _logger;
+    _Logger.writeLogToFile();
+    return _Logger;
 }
-Logger& SETID(Logger& _logger)
+Logger& SETID(Logger& _Logger)
 {
-    return _logger;
+    return _Logger;
 }
