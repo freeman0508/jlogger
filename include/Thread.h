@@ -1,8 +1,7 @@
 /*
-   wqueue.h
+   Thread.h
 
-   Worker thread queue based on the Standard C++ library list
-   template class.
+   Header for a Java style Thread class in C++.
 
    ------------------------------------------
 
@@ -21,29 +20,28 @@
    limitations under the License.
 */
 
-#ifndef __wqueue_h__
-#define __wqueue_h__
+#ifndef __THREAD_H__
+#define __THREAD_H__
 
 #include <pthread.h>
-#include <list>
-#include <iostream>
 
-using namespace std;
-
-class wqueue
+class Thread
 {
-    public:
-        wqueue();
-        ~wqueue();
-        void add(const std::string &item);
-        std::string remove();
-        int size();
-        void abort();
-    private:
-        list<std::string>          m_queue;
-        pthread_mutex_t  m_mutex;
-        pthread_cond_t   m_condv; 
-        bool volatile mIsRunnable;
+  public:
+    Thread();
+    virtual ~Thread();
+
+    int start();
+    int join();
+    int detach();
+    pthread_t self();
+    
+    virtual void* run() = 0;
+    
+  private:
+    pthread_t  m_tid;
+    int        m_running;
+    int        m_detached;
 };
 
 #endif

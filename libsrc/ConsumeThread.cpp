@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <sstream>
 
-ConsumeThread::ConsumeThread(wqueue & queue, const std::string &_LogFilePath) : m_queue(queue), mLogFileName(_LogFilePath)
+ConsumeThread::ConsumeThread(Wqueue & queue, const std::string &_LogFilePath) : m_queue(queue), mLogFileName(_LogFilePath)
 {
     isRunnable = true;
     mIsRunning = false;

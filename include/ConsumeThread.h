@@ -1,8 +1,8 @@
 #ifndef CONSUMERTHREAD_H
 #define CONSUMERTHREAD_H
 #include <fstream>
-#include "thread.h"
-#include "wqueue.h"
+#include "Thread.h"
+#include "Wqueue.h"
 
 //10M
 //#define LOGFILE_SIZE_LIMIT 10000000
@@ -11,7 +11,7 @@
 class ConsumeThread : public Thread
 {
   public:
-    ConsumeThread(wqueue & queue, const std::string &_LogFilePath);
+    ConsumeThread(Wqueue & queue, const std::string &_LogFilePath);
     ~ConsumeThread();
     void* run();
     bool isRunning();
@@ -20,7 +20,7 @@ class ConsumeThread : public Thread
     void rollLogFile();
     void openLogFile();
   private:
-      wqueue & m_queue;
+      Wqueue & m_queue;
       bool volatile isRunnable;
       bool volatile mIsRunning;
       std::fstream mLogFileStream;

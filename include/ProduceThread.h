@@ -1,7 +1,7 @@
 #ifndef PRODUCETHREAD_H
 #define PRODUCETHREAD_H
-#include "thread.h"
-#include "wqueue.h"
+#include "Thread.h"
+#include "Wqueue.h"
 class ProduceThread : public Thread
 {
   public:

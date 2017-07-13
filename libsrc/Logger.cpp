@@ -13,7 +13,7 @@ Logger::GC Logger::gc;
 */
 Logger& Logger::Instance()
 {
-    if (!m_pInstance)   // Only allow one instance of class to be generated.
+    if (NULL == m_pInstance)   // Only allow one instance of class to be generated.
     {
         pthread_mutex_lock(&mMutex);
         if (!m_pInstance)   // Only allow one instance of class to be generated.

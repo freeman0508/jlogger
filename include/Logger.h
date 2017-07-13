@@ -20,7 +20,7 @@ Modify:
 #include <sstream>
 #include <iostream>
 #include <pthread.h>
-#include "wqueue.h"
+#include "Wqueue.h"
 #include "ConsumeThread.h"
 #include "LogStream.h"
 
@@ -79,7 +79,7 @@ private:
     static pthread_mutex_t mWriteMutex;
     std::map<std::string, std::string> mLogFileList;
     std::map<unsigned long, LogStream *> mLSList;
-    wqueue mQueue;
+    Wqueue mQueue;
     ConsumeThread *mConsumeThread;
     ///////
 
