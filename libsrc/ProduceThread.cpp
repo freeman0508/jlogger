@@ -3,21 +3,20 @@
 #include "Logger.h"
 ProduceThread::ProduceThread() 
 {
+    std::cout << "    ProduceThread::ProduceThread" << std::endl;
     isRunnable = true;
     mIsRunning = false;
 }
 void* ProduceThread::run() 
 {
     mIsRunning = true;
-        // Remove 1 item at a time and process it. Blocks if no items are 
-        // available to process.
-        while(isRunnable)
-        {
-            DEBUG_LOGGER << "=========produce test=========" << END_LOGGER;
-            //sleep(1);
-        }
-        mIsRunning = false;
-        return NULL;
+    while(isRunnable)
+    {
+        DEBUG_LOGGER << "=========produce test=========" << END_LOGGER;
+        //sleep(1);
+    }
+    mIsRunning = false;
+    return NULL;
 }
 void ProduceThread::stop()
 {

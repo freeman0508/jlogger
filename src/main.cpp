@@ -4,6 +4,9 @@
 
 int main(int argc, char **argv)
 {
+    //init all logger resource in main process
+    //if there is no this line. sub thread will init. Main thread will stop quick. Maybe sub thread cannot init all resource finished.
+    //so init logger is necessary
     INFO_LOGGER << "Start ......" << END_LOGGER;
     ProduceThread pt;
     pt.start();
@@ -11,8 +14,8 @@ int main(int argc, char **argv)
     pt1.start();
     ProduceThread pt2;
     pt2.start();
-    //for(int i=0; i < 100; i++)
-    for(int i=0; i < 5000000; i++)
+    for(int i=0; i < 100; i++)
+    //for(int i=0; i < 5000000; i++)
     //while(true)
     {
         INFO_LOGGER << "I come from main thread." << END_LOGGER;
@@ -32,7 +35,5 @@ int main(int argc, char **argv)
     pt.stop();
     pt1.stop();
     pt2.stop();
-    /*
-    */
     return 0;
 }

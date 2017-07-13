@@ -26,6 +26,7 @@ Logger& Logger::Instance()
 }
 Logger::Logger()
 {
+    std::cout << "Logger::Logger" << std::endl;
     mConfiger.addLogID("ROOT", "/tmp/jlogger.log");
     //mConfiger.setMaxLogFileSize(1000000);
     mConfiger.setMaxLogFileSize(100000000);
