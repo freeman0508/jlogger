@@ -25,19 +25,19 @@ void Wqueue::add(const std::string &item)
 std::string Wqueue::remove() 
 {
     pthread_mutex_lock(&m_mutex);
-    std::cout << "Wqueue::remove 0" << std::endl;
+    //std::cout << "Wqueue::remove 0" << std::endl;
     if(m_queue.size() == 0)
     {
         pthread_mutex_unlock(&m_mutex);
         return "";
     }
-    std::cout << "Wqueue::remove 3" << std::endl;
+    //std::cout << "Wqueue::remove 3" << std::endl;
     std::string item = m_queue.front();
-    std::cout << "Wqueue::remove 4" << std::endl;
+    //std::cout << "Wqueue::remove 4" << std::endl;
     m_queue.pop_front();
-    std::cout << "Wqueue::remove 5" << std::endl;
+    //std::cout << "Wqueue::remove 5" << std::endl;
     pthread_mutex_unlock(&m_mutex);
-    std::cout << "Wqueue::remove 6" << std::endl;
+    //std::cout << "Wqueue::remove 6" << std::endl;
     return item;
 }
 int Wqueue::size() {

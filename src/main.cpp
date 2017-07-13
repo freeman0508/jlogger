@@ -11,7 +11,8 @@ int main(int argc, char **argv)
     pt1.start();
     ProduceThread pt2;
     pt2.start();
-    for(int i=0; i < 100; i++)
+    //for(int i=0; i < 100; i++)
+    for(int i=0; i < 5000000; i++)
     //while(true)
     {
         INFO_LOGGER << "I come from main thread." << END_LOGGER;
@@ -31,5 +32,7 @@ int main(int argc, char **argv)
     pt.stop();
     pt1.stop();
     pt2.stop();
+    /*
+    */
     return 0;
 }

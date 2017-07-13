@@ -23,6 +23,7 @@ Modify:
 #include "Wqueue.h"
 #include "ConsumeThread.h"
 #include "LogStream.h"
+#include "Configer.h"
 
 //define some AMCRO to make usage more simply
 //#define ADD_LOGGER(x,y,z) Logger::Instance().openLogFile(x,y,z)
@@ -81,6 +82,7 @@ private:
     std::map<unsigned long, LogStream *> mLSList;
     Wqueue mQueue;
     ConsumeThread *mConsumeThread;
+    Configer mConfiger;
     ///////
 
     //RAII

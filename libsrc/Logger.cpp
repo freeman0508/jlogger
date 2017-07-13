@@ -26,7 +26,11 @@ Logger& Logger::Instance()
 }
 Logger::Logger()
 {
-    mConsumeThread = new ConsumeThread(mQueue, "/tmp/jlog.log");
+    mConfiger.addLogID("ROOT", "/tmp/jlogger.log");
+    //mConfiger.setMaxLogFileSize(1000000);
+    mConfiger.setMaxLogFileSize(100000000);
+    mConfiger.setMaxLogFileCount(10);
+    mConsumeThread = new ConsumeThread(mQueue, mConfiger);
     mConsumeThread->start();
 }
 Logger::~Logger()

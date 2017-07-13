@@ -1,13 +1,17 @@
 #include "ConsumeThread.h"
 #include <unistd.h>
 #include <sstream>
+#include "Logger.h"
 
-ConsumeThread::ConsumeThread(Wqueue & queue, const std::string &_LogFilePath) : m_queue(queue), mLogFileName(_LogFilePath)
+ConsumeThread::ConsumeThread(Wqueue & queue, Configer &_Configer):m_queue(queue), mConfiger(_Configer)
 {
+    mLogFileName = mConfiger.getLogFileName("ROOT");
+    mMaxLogFileCount = mConfiger.getMaxLogFileCount();
+    mMaxLogFileSize = mConfiger.getMaxLogFileSize();
     isRunnable = true;
     mIsRunning = false;
     mLogNumber = 0;
-    openLogFile();
+    initLogFiles();
 }
 void* ConsumeThread::run() 
 {
@@ -15,13 +19,13 @@ void* ConsumeThread::run()
     while(isRunnable)
     {
         std::string item = m_queue.remove();
-        std::cout << "ConsumeThread::" << item << std::endl;
-        //rollLogFile();
-        if(isMaxSize())
+        std::string tmpLogID = "ROOT";
+        //std::cout << "ConsumeThread::" << item << std::endl;
+        if(isMaxSize(tmpLogID))
         {
-            rollLogFile();
+            rollLogFile(tmpLogID);
         }
-        mLogFileStream << item;
+        *mLogIDLogFileStream[tmpLogID] << item;
         //sleep(1);
     }
     mIsRunning = false;
@@ -45,116 +49,106 @@ bool ConsumeThread::isRunning()
 {
     return mIsRunning;
 }
-bool ConsumeThread::isMaxSize()
+bool ConsumeThread::isMaxSize(const std::string &_LogID)
 {
-    long funFileSize = mLogFileStream.tellp();
-    if(LOGFILE_SIZE_LIMIT <= funFileSize)
+    //std::cout << "ConsumeThread::isMaxSize: " << _LogID << std::endl;
+    long funFileSize = mLogIDLogFileStream[_LogID]->tellp();
+    if(mMaxLogFileSize <= funFileSize)
     {
         return true;
     }
     return false;
 }
-void ConsumeThread::rollLogFile()
+void ConsumeThread::rollLogFile(const std::string &_LogID)
 {
+    std::cout << mLogNumber << "ConsumeThread::rollLogFile" << std::endl;
+    INFO_LOGGER << "ConsumeThread::rollLogFile" << END_LOGGER;
+    std::fstream *fmFS = mLogIDLogFileStream[_LogID];
     std::stringstream fmSS;
     fmSS.str("");
-    mLogFileStream.close();
+    fmFS->close();
     //rename Log File
-    if(mLogNumber<LOGFILE_COUNT_LIMIT)
+    if(mLogNumber<mMaxLogFileCount)
     {
-        std::cout << mLogNumber << "1 ConsumeThread::~ConsumeThread" << std::endl;
+        //std::cout << mLogNumber << "1 ConsumeThread::rollLogFile" << std::endl;
         for(int i=mLogNumber; i>=0; i--)
         {
-        std::cout << mLogNumber << "2 ConsumeThread::~ConsumeThread" << std::endl;
+        //std::cout << mLogNumber << "2 ConsumeThread::rollLogFile" << std::endl;
             if(0==i)
             {
-        std::cout << mLogNumber << "3 ConsumeThread::~ConsumeThread" << std::endl;
+        //std::cout << mLogNumber << "3 ConsumeThread::rollLogFile" << std::endl;
                 fmSS << mLogFileName;
             }
             else
             {
-        std::cout << mLogNumber << "4 ConsumeThread::~ConsumeThread" << std::endl;
+        //std::cout << mLogNumber << "4 ConsumeThread::rollLogFile" << std::endl;
                 fmSS << mLogFileName << "." << i;
             }
-        std::cout << mLogNumber << "5 ConsumeThread::~ConsumeThread" << std::endl;
+        //std::cout << mLogNumber << "5 ConsumeThread::rollLogFile" << std::endl;
             std::string tmpOldName = fmSS.str();
             fmSS.str("");
             fmSS << mLogFileName << "." << i+1;
             std::string tmpNewName = fmSS.str();
             fmSS.str("");
-        std::cout << mLogNumber << "old: " << tmpOldName << " new: " << tmpNewName << std::endl;
+        //std::cout << mLogNumber << "old: " << tmpOldName << " new: " << tmpNewName << std::endl;
             rename(tmpOldName.c_str(), tmpNewName.c_str());
         }
-        std::cout << mLogNumber << "6 ConsumeThread::~ConsumeThread" << std::endl;
+        //std::cout << mLogNumber << "6 ConsumeThread::rollLogFile" << std::endl;
         mLogNumber++;
     }
     else
     {
-        mLogNumber = LOGFILE_COUNT_LIMIT-1;
+        mLogNumber = mMaxLogFileCount-1;
     }
-    openLogFile();
+    openLogFile(_LogID);
 }
-void ConsumeThread::openLogFile()
+void ConsumeThread::openLogFile(const std::string &_LogID)
 {
-    mLogFileStream.open(mLogFileName.c_str(),  std::fstream::out | std::fstream::app);
-    if(!mLogFileStream.is_open())
+
+        std::fstream *fmFS = NULL;
+        if(0<mLogIDLogFileStream.count(_LogID))
+        {
+            fmFS = mLogIDLogFileStream[_LogID];
+            if(fmFS->is_open())
+            {
+                fmFS->close();
+            }
+            delete fmFS;
+            mLogIDLogFileStream.erase(_LogID);
+        }
+        fmFS = new std::fstream();
+        fmFS->open(mLogFileName.c_str(),  std::fstream::out | std::fstream::app);
+        if(!fmFS->is_open())
+        {
+            std::cout << "Open " << mLogFileName << " failed." << std::endl;
+        }
+        mLogIDLogFileStream[_LogID]=fmFS;
+}
+void ConsumeThread::initLogFiles()
+{
+    std::map<std::string, std::string> tmpMap = mConfiger.getLogIDMap();
+    std::map<std::string, std::string>::iterator fmIt = tmpMap.begin();
+    for(; fmIt != tmpMap.end(); fmIt++)
     {
-        std::cout << "Open " << mLogFileName << " failed." << std::endl;
+        std::cout << fmIt->first << "=>" << fmIt->second << std::endl;
+        std::fstream *fmFS = NULL;
+        if(0<mLogIDLogFileStream.count(fmIt->first))
+        {
+            fmFS = mLogIDLogFileStream[fmIt->first];
+            fmFS->close();
+            delete fmFS; 
+            mLogIDLogFileStream.erase(fmIt->first);
+        }
+        fmFS=new std::fstream();
+        fmFS->open(mLogFileName.c_str(),  std::fstream::out | std::fstream::app);
+        if(!fmFS->is_open())
+        {
+            std::cout << "Open " << mLogFileName << " failed." << std::endl;
+        }
+        mLogIDLogFileStream[fmIt->first]=fmFS;
     }
 }
 /*
-bool Logger::openLogFile(const std::string &_logFile, const std::string &_del, const std::string &_ID)
-{
-    if(mFSList.count(_ID)>0)
-    {
-        //std::cout << "fstream id: " << _ID << " is exists already." << std::endl;
-		return false;
-    }
-    delimiter = _del;
-    setLevelMarker();
-    std::fstream *tmpFS = new std::fstream();
-    tmpFS->open (_logFile.c_str(),  std::fstream::out | std::fstream::app);
-    if(tmpFS->is_open())
-    {
-        //INFO_LOGGER << "======================================Logger Start======================================" << END_LOGGER;
-        if(mFSList.empty())
-        {
-            mFSList["ROOT"] = tmpFS;
-        }
-        mFSList[_ID] = tmpFS;
-        setFstreamID(_ID);
-		return true;
-    }
-    else
-    {
-        //std::cout << "Logger is failed!" << std::endl;
-		return false;
-    }
-}
-Logger::LEVEL Logger::getLevel()
-{
-    return level;
-}
-void Logger::setLevelMarker(
-        std::string _marker_information, 
-        std::string _marker_warnning, 
-        std::string _marker_error, 
-        std::string _marker_critical, 
-        std::string _marker_debug,
-        std::string _marker_nolevel
-    )
-{
-    marker_information = _marker_information;
-    marker_warnning = _marker_warnning;
-    marker_error = _marker_error;
-    marker_critical = _marker_critical;
-    marker_debug = _marker_debug;
-    marker_nolevel = _marker_nolevel;
-}
-std::string Logger::getLevelMarker()
-{
-    return getLevelMarker(level);
-}
 std::string Logger::removePrefix(const std::string &_content, LEVEL _level)
 {
     std::string tmp_string = _content;
