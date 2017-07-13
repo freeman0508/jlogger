@@ -25,24 +25,44 @@ Modify:
 #include "LogStream.h"
 #include "Configer.h"
 
+//define some global interface
+#define INIT_LOGGER Logger::Instance() 
+#define LOAD_CONFIG(x) Logger::Instance().loadConfigFile(x)
+#define SET_MAX_LOG_FILE_SIZE(x) Logger::Instance().setMaxLogFileSize(x)
+#define SET_MAX_LOG_FILE_COUNT(x) Logger::Instance().setMaxLogFileCount(x)
+#define DUMP_CONFIGER Logger::Instance().dumpConfiger()
+
 //define some AMCRO to make usage more simply
 //#define ADD_LOGGER(x,y,z) Logger::Instance().openLogFile(x,y,z)
 #define LOGGER Logger::Instance()
-#define INFO_LOGGER LOGGER << INFO 
-#define WARNNING_LOGGER LOGGER << WARNNING
-#define ERROR_LOGGER LOGGER << ERROR
-#define CRITICAL_LOGGER LOGGER << CRITICAL 
-#define DEBUG_LOGGER LOGGER<< DEBUG
-#define NOLEVEL_LOGGER LOGGER<< NOLEVEL
+//#define INFO_LOGGER LOGGER << INFO 
+#define INFO_LOGGER LOGGER << "ROOT" << SETID << INFO
+#define INFO_LOGGER_ID(x) LOGGER << x << SETID << INFO
 
+#define WARNNING_LOGGER LOGGER << "ROOT" << SETID <<  WARNNING
+#define WARNNING_LOGGER_ID(x) LOGGER << x << SETID <<  WARNNING
+
+#define ERROR_LOGGER LOGGER << "ROOT" << SETID << ERROR
+#define ERROR_LOGGER_ID(x) LOGGER << x << SETID << ERROR
+
+#define CRITICAL_LOGGER LOGGER << "ROOT" << SETID << CRITICAL 
+#define CRITICAL_LOGGER_ID(x) LOGGER << x << SETID << CRITICAL 
+
+#define DEBUG_LOGGER LOGGER<< "ROOT" << SETID << DEBUG
+#define DEBUG_LOGGER_ID(x) LOGGER<< x << SETID << DEBUG
+
+#define NOLEVEL_LOGGER LOGGER<< "ROOT" << SETID << NOLEVEL
+#define NOLEVEL_LOGGER_ID(x) LOGGER<< x << SETID << NOLEVEL
+
+//define const 
 #define MARKER_INFORMATION "[INFORMATION]"
 #define MARKER_WARNNING "[WARNNING]"
 #define MARKER_ERROR "[ERROR]"
 #define MARKER_CRITICAL "[CRITICAL]"
 #define MARKER_DEBUG "[DEBUG]"
 #define MARKER_NOLEVEL "[NOLEVEL]"
-
 #define SEPARATOR ">>>"
+
 
 
 class Logger{
@@ -67,6 +87,12 @@ public:
     std::string getLevelMarker(LEVEL level);
 	std::string getTime();
     void addLogFile(const std::string &_LogName, const std::string &_LogFileName);
+    void loadConfigFile(const std::string &_ConfigFilePath);
+    void setMaxLogFileSize(long _Size);
+    void setMaxLogFileCount(int _Count);
+    void dumpConfiger();
+    void makeLogHeader(LEVEL _Level);
+    std::string getString();
 
 private:
     //single instance modle, private empty and copy construct functions to forbid to instance this class 

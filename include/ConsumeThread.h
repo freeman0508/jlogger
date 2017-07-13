@@ -18,13 +18,13 @@ class ConsumeThread : public Thread
     void rollLogFile(const std::string &_LogID);
     void initLogFiles();
     void openLogFile(const std::string &_LogID);
+    std::string getLogID(const std::string &_Message);
   private:
       Wqueue & m_queue;
       bool volatile isRunnable;
       bool volatile mIsRunning;
       std::fstream mLogFileStream;
       std::map<std::string, std::fstream *> mLogIDLogFileStream;
-      std::string mLogFileName;
       int mLogNumber;
       Configer &mConfiger;
       int mMaxLogFileCount;

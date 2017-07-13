@@ -28,30 +28,31 @@ Logger::Logger()
 {
     std::cout << "Logger::Logger" << std::endl;
     mConfiger.addLogID("ROOT", "/tmp/jlogger.log");
-    //mConfiger.setMaxLogFileSize(1000000);
-    mConfiger.setMaxLogFileSize(100000000);
-    mConfiger.setMaxLogFileCount(10);
+    mConfiger.addLogID("TEST", "/tmp/jlogger_test.log");
     mConsumeThread = new ConsumeThread(mQueue, mConfiger);
     mConsumeThread->start();
 }
-Logger::~Logger()
+void Logger::loadConfigFile(const std::string &_ConfigFilePath)
 {
-    std::map<unsigned long, LogStream *>::iterator it = mLSList.begin();
-    for(; it != mLSList.end(); it++)
-    {
-        if(it->second != NULL)
-        {
-            std::cout << "*********delete thread id: " <<  it->first << std::endl;
-            delete it->second;
-            //mLSList.erase(it->first);
-        }
-    }
-    if(mConsumeThread!= NULL)
-    {
-        delete mConsumeThread;
-    }
-    pthread_mutex_destroy(&mMutex);
-    pthread_mutex_destroy(&mWriteMutex);
+    mConfiger.LoadFile(_ConfigFilePath.c_str());
+    int fmMaxLogFileCount = mConfiger.GetLongValue("Logger", "MaxLogFileCount", 10);
+    long fmMaxLogFileSize = mConfiger.GetLongValue("Logger", "MaxLogFileSize", 100);
+    std::cout << "Logger::Logger: fmMaxLogFileCount: " << fmMaxLogFileCount << std::endl;
+    std::cout << "Logger::Logger: fmMaxLogFileSize: " << fmMaxLogFileSize << std::endl;
+    mConfiger.setMaxLogFileSize(fmMaxLogFileSize);
+    mConfiger.setMaxLogFileCount(fmMaxLogFileCount);
+}
+void Logger::setMaxLogFileSize(long _Size)
+{
+    mConfiger.setMaxLogFileSize(_Size);
+}
+void Logger::setMaxLogFileCount(int _Count)
+{
+    mConfiger.setMaxLogFileCount(_Count);
+}
+void Logger::dumpConfiger()
+{
+    mConfiger.dumpConfiger();
 }
 void Logger::addLogFile(const std::string &_LogName, const std::string &_LogFileName)
 {
@@ -168,54 +169,48 @@ std::string Logger::getLevelMarker(LEVEL level)
     }
     return tmp_marker;
 }
+void Logger::makeLogHeader(LEVEL _Level)
+{
+    *this << SEPARATOR;
+    *this << getTime();
+    *this << SEPARATOR;
+    *this << getLevelMarker(_Level);
+    *this << SEPARATOR;
+}
+std::string Logger::getString()
+{
+    return mLSList[pthread_self()]->toString();
+}
 
 //flags
 Logger& INFO(Logger& _Logger)
 {
-    _Logger << _Logger.getTime();
-    _Logger << SEPARATOR;
-    _Logger << _Logger.getLevelMarker(Logger::information);
-    _Logger << SEPARATOR;
+    _Logger.makeLogHeader(Logger::information);
     return _Logger;
 }
 Logger& WARNNING(Logger& _Logger)
 {
-    _Logger << _Logger.getTime();
-    _Logger << SEPARATOR;
-    _Logger << _Logger.getLevelMarker(Logger::warnning);
-    _Logger << SEPARATOR;
+    _Logger.makeLogHeader(Logger::warnning);
     return _Logger;
 }
 Logger& ERROR(Logger& _Logger)
 {
-    _Logger << _Logger.getTime();
-    _Logger << SEPARATOR;
-    _Logger << _Logger.getLevelMarker(Logger::error);
-    _Logger << SEPARATOR;
+    _Logger.makeLogHeader(Logger::error);
     return _Logger;
 }
 Logger& CRITICAL(Logger& _Logger)
 {
-    _Logger << _Logger.getTime();
-    _Logger << SEPARATOR;
-    _Logger<< _Logger.getLevelMarker(Logger::critical);
-    _Logger << SEPARATOR;
+    _Logger.makeLogHeader(Logger::critical);
     return _Logger;
 }
 Logger& DEBUG(Logger& _Logger)
 {
-    _Logger << _Logger.getTime();
-    _Logger << SEPARATOR;
-    _Logger << _Logger.getLevelMarker(Logger::debug);
-    _Logger << SEPARATOR;
+    _Logger.makeLogHeader(Logger::debug);
     return _Logger;
 }
 Logger& NOLEVEL(Logger& _Logger)
 {
-    _Logger << _Logger.getTime();
-    _Logger << SEPARATOR;
-    _Logger << _Logger.getLevelMarker(Logger::nolevel);
-    _Logger << SEPARATOR;
+    _Logger.makeLogHeader(Logger::nolevel);
     return _Logger;
 }
 Logger& END_LOGGER(Logger& _Logger)
@@ -225,5 +220,28 @@ Logger& END_LOGGER(Logger& _Logger)
 }
 Logger& SETID(Logger& _Logger)
 {
+    std::cout << "========================================================SETID============" << std::endl;
+    std::string tmpLogID = _Logger.getString();
+    std::cout << tmpLogID  << std::endl;
+    //mConfiger.addLogI(tmpLogID);
     return _Logger;
+}
+Logger::~Logger()
+{
+    std::map<unsigned long, LogStream *>::iterator it = mLSList.begin();
+    for(; it != mLSList.end(); it++)
+    {
+        if(it->second != NULL)
+        {
+            std::cout << "*********delete thread id: " <<  it->first << std::endl;
+            delete it->second;
+            //mLSList.erase(it->first);
+        }
+    }
+    if(mConsumeThread!= NULL)
+    {
+        delete mConsumeThread;
+    }
+    pthread_mutex_destroy(&mMutex);
+    pthread_mutex_destroy(&mWriteMutex);
 }
