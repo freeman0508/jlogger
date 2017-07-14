@@ -54,67 +54,10 @@ void Logger::dumpConfiger()
 {
     mConfiger.dumpConfiger();
 }
-void Logger::addLogFile(const std::string &_LogName, const std::string &_LogFileName)
+void Logger::addLogID(const std::string &_LogID, const std::string &_LogFileName)
 {
-    if(0 == mLogFileList.count(_LogName))
-    {
-        mLogFileList[_LogName] = _LogFileName;
-    }
+    mConfiger.addLogID(_LogID, _LogFileName);
 }
-/*
-Logger& Logger::operator<< (int _number)
-{
-    unsigned long tmpThreadID = pthread_self();
-    if(0 == mLSList.count(tmpThreadID))
-    {
-        mLSList[tmpThreadID]= new LogStream();
-    }
-    *mLSList[tmpThreadID] << _number;
-    return *this;
-}
-Logger& Logger::operator<< (long _number)
-{
-    unsigned long tmpThreadID = pthread_self();
-    if(0 == mSSList.count(tmpThreadID))
-    {
-        mSSList[tmpThreadID]= new std::stringstream();
-    }
-    *mSSList[tmpThreadID] << _number;
-    return *this;
-}
-Logger& Logger::operator<< (double _number)
-{
-    unsigned long tmpThreadID = pthread_self();
-    if(0 == mSSList.count(tmpThreadID))
-    {
-        mSSList[tmpThreadID]= new std::stringstream();
-    }
-    *mSSList[tmpThreadID] << _number;
-    return *this;
-}
-*/
-Logger& Logger::operator<< (std::string _Message)
-{
-    unsigned long tmpThreadID = pthread_self();
-    if(0 == mLSList.count(tmpThreadID))
-    {
-        mLSList[tmpThreadID]= new LogStream();
-    }
-    *mLSList[tmpThreadID] << _Message;
-    return *this;
-}
-/*
-Logger& Logger::operator << (char *_Message)
-{
-    unsigned long tmpThreadID = pthread_self();
-    if(0 == mLSList.count(tmpThreadID))
-    {
-        mLSList[tmpThreadID]= new LogStream();
-    }
-    *mLSList[tmpThreadID] << _Message;
-    return *this;
-}
-*/
 Logger& Logger::operator <<(Logger& (*pfunc)(Logger &_Logger))
 {
     return pfunc(*this);
@@ -220,7 +163,7 @@ Logger& END_LOGGER(Logger& _Logger)
 }
 Logger& SETID(Logger& _Logger)
 {
-    std::cout << "========================================================SETID============" << std::endl;
+    std::cout << "============SETID============" << std::endl;
     std::string tmpLogID = _Logger.getString();
     std::cout << tmpLogID  << std::endl;
     //mConfiger.addLogI(tmpLogID);

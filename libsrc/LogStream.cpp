@@ -7,11 +7,18 @@ LogStream::LogStream()
 LogStream::~LogStream()
 {
 }
-LogStream &LogStream::operator<< (std::string _String)
+/*
+LogStream& LogStream::operator<< (const std::string &_String)
 {
     mSS << _String;
     return *this;
 }
+LogStream& LogStream::operator << (const char *_Message)
+{
+    mSS << _Message;
+    return *this;
+}
+*/
 std::string LogStream::toString()
 {
     return mSS.str();

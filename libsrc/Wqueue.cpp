@@ -41,6 +41,7 @@ std::string Wqueue::remove()
     return item;
 }
 int Wqueue::size() {
+    //std::cout << "Wqueue::size" << std::endl;
     pthread_mutex_lock(&m_mutex);
     int size = m_queue.size();
     pthread_mutex_unlock(&m_mutex);

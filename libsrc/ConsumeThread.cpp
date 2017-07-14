@@ -19,7 +19,6 @@ void* ConsumeThread::run()
     while(isRunnable)
     {
         std::string item = m_queue.remove();
-        //std::string tmpLogID = "ROOT";
         std::string tmpLogID = getLogID(item);
         if(0==mLogIDLogFileStream.count(tmpLogID))
         {
@@ -33,6 +32,7 @@ void* ConsumeThread::run()
             rollLogFile(tmpLogID);
         }
         *mLogIDLogFileStream[tmpLogID] << item;
+        mLogIDLogFileStream[tmpLogID]->flush();
         //sleep(1);
     }
     mIsRunning = false;

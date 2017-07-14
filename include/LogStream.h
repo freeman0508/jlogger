@@ -7,7 +7,13 @@ class LogStream
     public:
         LogStream();
         ~LogStream();
-        LogStream& operator << (std::string _String);
+        template <class T> LogStream& operator << (const T &_Message)
+        {
+            mSS << _Message;
+            return *this;
+        }
+        //LogStream& operator << (const std::string &_String);
+        //LogStream& operator << (const char *_Message);
         std::string toString();
         void clear();
     private:

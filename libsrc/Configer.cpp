@@ -25,6 +25,12 @@ int Configer::getMaxLogFileCount()
 }
 std::string Configer::getLogFileName(const std::string &_LogID)
 {
+    if(0==mLogIDMap.count(_LogID))
+    {
+        //user want to get a not existed LogID, just add it by default log file path
+        //user should add a new LogID before use it
+        addLogID(_LogID, "/tmp/"+_LogID+".log");
+    }
     return mLogIDMap[_LogID];
 }
 void Configer::addLogID(const std::string &_LogID, const std::string &_LogFilePath)

@@ -25,16 +25,20 @@ Modify:
 #include "LogStream.h"
 #include "Configer.h"
 
+
+#define VERSION 1.1.0
+
+#define LOGGER Logger::Instance()
 //define some global interface
-#define INIT_LOGGER Logger::Instance() 
-#define LOAD_CONFIG(x) Logger::Instance().loadConfigFile(x)
+#define INIT_LOGGER LOGGER
+#define LOAD_CONFIG(x) LOGGER.loadConfigFile(x)
 #define SET_MAX_LOG_FILE_SIZE(x) Logger::Instance().setMaxLogFileSize(x)
 #define SET_MAX_LOG_FILE_COUNT(x) Logger::Instance().setMaxLogFileCount(x)
 #define DUMP_CONFIGER Logger::Instance().dumpConfiger()
+#define ADD_LOGGER_ID(x, y) Logger::Instance().addLogID(x,y)
 
 //define some AMCRO to make usage more simply
 //#define ADD_LOGGER(x,y,z) Logger::Instance().openLogFile(x,y,z)
-#define LOGGER Logger::Instance()
 //#define INFO_LOGGER LOGGER << INFO 
 #define INFO_LOGGER LOGGER << "ROOT" << SETID << INFO
 #define INFO_LOGGER_ID(x) LOGGER << x << SETID << INFO
@@ -53,6 +57,7 @@ Modify:
 
 #define NOLEVEL_LOGGER LOGGER<< "ROOT" << SETID << NOLEVEL
 #define NOLEVEL_LOGGER_ID(x) LOGGER<< x << SETID << NOLEVEL
+
 
 //define const 
 #define MARKER_INFORMATION "[INFORMATION]"
@@ -74,9 +79,19 @@ public:
     //bool openLogFile(const std::string &logFile, const std::string &del=">>", const std::string &_ID="ROOT");
     void writeLogToFile();
     //overload operator << to support: LOGGER << str1 << str2 << END_LOGGER
-    Logger& operator << (std::string _Message);
+    template <class T> Logger& operator << (const T &_Message)
+    {
+        unsigned long tmpThreadID = pthread_self();
+        if(0 == mLSList.count(tmpThreadID))
+        {
+            mLSList[tmpThreadID]= new LogStream();
+        }
+        *mLSList[tmpThreadID] << _Message;
+        return *this;
+    }
     /*
-    Logger& operator << (char *str);
+    Logger& operator << (const char *str);
+    Logger& operator << (const std::string &_Message);
     Logger& operator<< (int number);
     Logger& operator<< (long number);
     Logger& operator<< (double number);
@@ -86,7 +101,7 @@ public:
     Logger& operator <<(Logger& (*pfunc)(Logger&));
     std::string getLevelMarker(LEVEL level);
 	std::string getTime();
-    void addLogFile(const std::string &_LogName, const std::string &_LogFileName);
+    void addLogID(const std::string &_LogID, const std::string &_LogFileName);
     void loadConfigFile(const std::string &_ConfigFilePath);
     void setMaxLogFileSize(long _Size);
     void setMaxLogFileCount(int _Count);
@@ -104,7 +119,6 @@ private:
     static Logger* m_pInstance;
     static pthread_mutex_t mMutex;
     static pthread_mutex_t mWriteMutex;
-    std::map<std::string, std::string> mLogFileList;
     std::map<unsigned long, LogStream *> mLSList;
     Wqueue mQueue;
     ConsumeThread *mConsumeThread;

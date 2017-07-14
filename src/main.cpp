@@ -11,7 +11,7 @@ int main(int argc, char **argv)
     LOAD_CONFIG("logger.cfg");
     SET_MAX_LOG_FILE_COUNT(34);
     DUMP_CONFIGER;
-    //LOGGER << "TEST" << SETID << INFO << "Start ......" << END_LOGGER;
+
     INFO_LOGGER_ID("TEST") << "Start 1......" << END_LOGGER;
     INFO_LOGGER_ID("ROOT") << "Start 2......" << END_LOGGER;
     INFO_LOGGER << "Start 3......" << END_LOGGER;
@@ -28,6 +28,10 @@ int main(int argc, char **argv)
         INFO_LOGGER << "I come from main thread." << END_LOGGER;
         //sleep(1);
     }
+    INFO_LOGGER << "test int: " << 230 << END_LOGGER;
+    INFO_LOGGER << "test double: " << 2.14 << END_LOGGER;
+    char *tmpChar = "xxxxxxxx";
+    INFO_LOGGER << "test char: " << tmpChar << END_LOGGER;
     INFO_LOGGER << "test INFO_LOGGER 1" << END_LOGGER;
     CRITICAL_LOGGER << "test CRITICAL_LOGGER" << END_LOGGER;
     CRITICAL_LOGGER << "test CRITICAL_LOGGER------- !!!" << END_LOGGER;
@@ -38,7 +42,9 @@ int main(int argc, char **argv)
     NOLEVEL_LOGGER << "1|WRITE|True|test DEBUG_LOGGER" << END_LOGGER;
     INFO_LOGGER << "ROOT" << SETID << "2|WRITE|True|test DEBUG_LOGGER" << END_LOGGER;
     NOLEVEL_LOGGER << "ROOT" << SETID << "3|WRITE|True|test DEBUG_LOGGER" << END_LOGGER;
-    //NOLEVEL_LOGGER_ID("HELLO") << "4|WRITE|True|test DEBUG_LOGGER" << END_LOGGER;
+    NOLEVEL_LOGGER_ID("HELLO") << "4|WRITE|True|test DEBUG_LOGGER" << END_LOGGER;
+    ADD_LOGGER_ID("ACETEC", "/tmp/jlog.ace.log");
+    NOLEVEL_LOGGER_ID("ACETEC") << "test add log file" << END_LOGGER;
     pt.stop();
     pt1.stop();
     pt2.stop();

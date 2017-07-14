@@ -17,3 +17,16 @@ Version 1.1:
     2. Support multi log files by log id. So far just support only one log id "ROOT". 
         2.1 roll out log file by log id
 
+Version 1.1.0:
+    1. support char *, string, int, double, float, long by template;
+    2. Support multi log files by log id.  INFO_LOGGER_ID to tell which LogID was used
+        INFO_LOGGER_ID("TEST") << "Start 1......" << END_LOGGER;
+        INFO_LOGGER_ID("ROOT") << "Start 2......" << END_LOGGER;
+    3. read ini configuration file to set properties. call api to reset properties.
+        MaxLogFileSize, MaxLogFileCount
+    Issue:
+        1. 
+ConsumeThread::initLogFiles ROOT=>/tmp/jlogger.log
+ConsumeThread::initLogFiles TEST=>/tmp/jlogger_test.log
+
+ is not exists!
