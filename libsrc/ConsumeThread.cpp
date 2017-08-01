@@ -18,25 +18,38 @@ void* ConsumeThread::run()
     mIsRunning = true;
     while(isRunnable)
     {
-        std::string item = m_queue.remove();
-        std::string tmpLogID = getLogID(item);
+        std::string tmpTotalMessage = m_queue.remove();
+        std::string tmpLogID = getLogID(tmpTotalMessage);
+        std::string tmpLogMessage = getLogMessage(tmpTotalMessage);
+        if(""==tmpLogID)
+        {
+            //sleep(1);
+            continue;
+        }
         if(0==mLogIDLogFileStream.count(tmpLogID))
         {
-            std::cout <<  item << std::endl;
             std::cout <<  tmpLogID << " is not exists!" << std::endl;
+            std::cout << tmpTotalMessage << std::endl;
             openLogFile(tmpLogID);
         }
-        //std::cout << "ConsumeThread::" << item << std::endl;
         if(isMaxSize(tmpLogID))
         {
             rollLogFile(tmpLogID);
         }
-        *mLogIDLogFileStream[tmpLogID] << item;
+        *mLogIDLogFileStream[tmpLogID] << tmpLogMessage;
         mLogIDLogFileStream[tmpLogID]->flush();
-        //sleep(1);
     }
     mIsRunning = false;
     return NULL;
+}
+std::string ConsumeThread::getLogMessage(const std::string &_Message)
+{
+    std::string::size_type fmLocation = _Message.find(">>>");
+    if(fmLocation != std::string::npos)
+    {
+        return _Message.substr(fmLocation+3);
+    }
+    return "";
 }
 std::string ConsumeThread::getLogID(const std::string &_Message)
 {
@@ -52,9 +65,9 @@ ConsumeThread::~ConsumeThread()
     std::cout << "ConsumeThread::~ConsumeThread" << std::endl;
     while(mIsRunning)
     {
-        std::cout << "ConsumeThread::~ConsumeThread size:" << m_queue.size() << std::endl;
         if(0 == m_queue.size())
         {
+            std::cout << "ConsumeThread::~ConsumeThread 0" << std::endl;
             isRunnable = false;
         }
     }

@@ -27,8 +27,6 @@ Logger& Logger::Instance()
 Logger::Logger()
 {
     std::cout << "Logger::Logger" << std::endl;
-    mConfiger.addLogID("ROOT", "/tmp/jlogger.log");
-    mConfiger.addLogID("TEST", "/tmp/jlogger_test.log");
     mConsumeThread = new ConsumeThread(mQueue, mConfiger);
     mConsumeThread->start();
 }
@@ -163,10 +161,6 @@ Logger& END_LOGGER(Logger& _Logger)
 }
 Logger& SETID(Logger& _Logger)
 {
-    std::cout << "============SETID============" << std::endl;
-    std::string tmpLogID = _Logger.getString();
-    std::cout << tmpLogID  << std::endl;
-    //mConfiger.addLogI(tmpLogID);
     return _Logger;
 }
 Logger::~Logger()

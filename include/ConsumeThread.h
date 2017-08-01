@@ -19,6 +19,7 @@ class ConsumeThread : public Thread
     void initLogFiles();
     void openLogFile(const std::string &_LogID);
     std::string getLogID(const std::string &_Message);
+    std::string getLogMessage(const std::string &_Message);
   private:
       Wqueue & m_queue;
       bool volatile isRunnable;

@@ -13,7 +13,7 @@ void* ProduceThread::run()
     while(isRunnable)
     {
         DEBUG_LOGGER << "=========produce test=========" << END_LOGGER;
-        //sleep(1);
+        usleep(1000);
     }
     mIsRunning = false;
     return NULL;
